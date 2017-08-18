@@ -525,7 +525,7 @@ libasnrrlp.so: libasnrrlp.so.1.0
 	ln -sf libasnrrlp.so.1 libasnrrlp.so
 
 libasnrrlp.so.1.0: $(ASN_MODULE_OBJS)
-	$(CC) -shared -Wl,-soname,libasnrrlp.so.1 -o $@ $^
+	$(CC) -shared -Wl,-install_name,libasnrrlp.so.1 -o $@ $^
 	ln -sf libasnrrlp.so.1.0 libasnrrlp.so.1
 
 asn1.stamp: $(ASN1_SOURCE)

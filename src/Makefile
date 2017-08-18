@@ -8,7 +8,7 @@ include $(TOP)/config.mk
 export CFLAGS
 
 CFLAGS += $(CONF_CFLAGS) $(CONF_SUPL_DEBUG)
-CFLAGS += -I./asn-rrlp -I./asn-supl
+CFLAGS += -I./asn-rrlp -I./asn-supl -I/usr/local/opt/openssl/include
 
 SUPL_ASN1_SOURCE = supl-common.asn supl-end.asn supl-pos.asn supl-response.asn 
 SUPL_ASN1_SOURCE += supl-start.asn supl-ulp.asn supl-init.asn supl-posinit.asn
@@ -24,7 +24,7 @@ supl-client: libsupl.so supl-client.o
 	$(CC) -o $@ supl-client.o -L. -lsupl -lssl -lm
 
 supl-proxy: libsupl.so supl-proxy.o
-	$(CC) -o $@ supl-proxy.o -L. -lsupl -lssl -lm
+	$(CC) -o $@ supl-proxy.o -L. -Lasn-rrlp -lsupl -lasnrrlp -lm $(shell pkg-config --libs openssl)
 
 supl-cert: supl-cert.o
 	$(CC) -o $@ supl-cert.o $(shell pkg-config --libs openssl) -lm
@@ -33,9 +33,10 @@ libsupl.so: libsupl.so.1.0
 	ln -sf libsupl.so.1 libsupl.so
 
 libsupl.so.1.0: asn-supl/libasnsupl.a asn-rrlp/libasnrrlp.a supl.o
-	$(CC) -shared -Wl,-soname,libsupl.so.1 -o $@ supl.o \
-           -Wl,--whole-archive ./asn-supl/libasnsupl.a -Wl,--no-whole-archive \
-           ./asn-rrlp/libasnrrlp.a -lssl
+	$(CC) -shared -Wl,-install_name,libsupl.so.1 -o $@ supl.o \
+           -Wl ./asn-supl/libasnsupl.a -Wl \
+           ./asn-rrlp/libasnrrlp.a -lssl \
+           -L/usr/local/opt/openssl/lib
 	ln -sf libsupl.so.1.0 libsupl.so.1
 
 asn-supl/libasnsupl.a:

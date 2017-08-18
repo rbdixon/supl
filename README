@@ -181,3 +181,10 @@ CI = 0x31b0
 
 Alternatively you may setup supl-proxy on your machine and see
 what your device talks to the supl server.
+
+== Build on Mac ==
+
+```
+./configure --precompiled-asn1
+make
+```
